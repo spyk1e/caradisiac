@@ -1,0 +1,18 @@
+[
+    {
+        "brand": "MAZDA",
+        "image": "https://images.caradisiac.com/logos-ref/modele/modele--mazda-mx5-4e-generation/S5-modele--mazda-mx5-4e-generation.jpg",
+        "model": "Mazda Mx5 (4e Generation)",
+        "volume": "130",
+        "uuid": "a369320e-7c4e-587c-8b00-b47349f94982",
+        "name": "IV 1.5 SKYACTIV-G 131 CHERRY TOP"
+    },
+    {
+        "brand": "MAZDA",
+        "image": "https://images.caradisiac.com/logos-ref/modele/modele--mazda-mx5-4e-generation-rf/S5-modele--mazda-mx5-4e-generation-rf.jpg",
+        "model": "Mazda Mx5 (4e Generation) Rf",
+        "volume": "127",
+        "uuid": "1a01b9e7-6ffb-5765-8956-d10b45ee6928",
+        "name": "IV RF 1.5 SKYACTIV-G 131 DYNAMIQUE"
+    }
+]
