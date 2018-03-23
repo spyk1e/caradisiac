@@ -1,6 +1,10 @@
 var caradisiac = require('./caradisiac');
 
-caradisiac.PutOnElasticSearch(function () {
+//caradisiac.ElasticTest();
+
+
+caradisiac.GetCarsFromElastic(function () {
     console.log(" ");
 });
+
 

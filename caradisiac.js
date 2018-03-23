@@ -8,6 +8,8 @@ const {
     getModels
 } = require('node-car-api');
 
+//Populate
+var iBulk = 1;
 
 function CheckExistuuid(JsonModel, uuid) {
     JsonModel.forEach(function (model) {
@@ -23,7 +25,7 @@ async function GetBrands(callback) {
     callback(brands);
 }
 
-async function ModelsToList(brand, callback) {
+async function ModelsToElastic(brand, client, callback) {
     var ibrands = 0;
     var JsonModel = [];
 
@@ -37,12 +39,16 @@ async function ModelsToList(brand, callback) {
             models = await getModels(brand);
             console.log(brand + ": " + models.length);
             await models.forEach(async function (model) {
-                if (!CheckExistuuid(JsonModel, model.uuid)) {
-                    JsonModel.push(model);
-                    imodels++;
+                if (model.volume != null) {
+                    if (!CheckExistuuid(JsonModel, model.uuid)) {
+                        JsonModel.push(model);
+                        ImportCar(client, iBulk, model);
+                        iBulk++;
+                        imodels++;
+                    }
                 }
             });
-            if (iwhile > 1) { //Check again 4 times max
+            if (iwhile > 1) { //Check again 2 times max
                 imodels = 11;
             };
         }
@@ -61,98 +67,73 @@ function WriteJson(listJson, callback) {
     })
 }
 
-exports.PutCarsOnJson = function (callback) {
+exports.PutCarsOnElastic = function (callback) {
     GetBrands(function (brands) {
-        ModelsToList(brands, function (i, brands, JsonModel) {
-            console.log("brands:" + i + "/" + brands.length);
+        //For elastic
+        var client = new elastic.Client({
+            host: 'localhost:9200'
+        });
+        iBulk = 1;
 
-            if (i > brands.length * 0.8) { //Write if more than 80% of brand checked in order to prevent API Timeout
-                //console.log(JsonModel);
-                console.log("Nb of cars:" + JsonModel.length);
-                WriteJson(JsonModel, function () {
-                    console.log("Extraction finished");
-                });
-            }
+        ModelsToElastic(brands, client, function (i, brands, JsonModel) {
+            console.log("brands:" + i + "/" + brands.length);
         });
     });
 }
-//max: 436
 
-exports.PutOnElasticSearch = function () {
-    var JsonC = {};
-    fs.readFile('Cars.json', 'utf8', function (err, data) {
-        if (err) {
-            console / log(err)
-        } // log the error
-        else {
-            var JsonC = JSON.parse(data);
-            console.log("readed");
-
-            var bulkBody = [];
-            var iBulk = 1;
-            /*
-                        JsonC.forEach(function (car) {
-                            iBulk++;
-                            bulkBody.push({
-                                index: {
-                                    "_index": 'icars',
-                                    "_type": 'cars',
-                                    "_id": iBulk
-                                }
-                            });
-                            bulkBody.push(car);
-                        })
-
-                        console.log(bulkBody);
-            */
-
-            //Put it on elastic
-            var client = new elastic.Client({
-                host: 'localhost:9200'
-            });
-
-            JsonC.forEach(function (car) {
-                iBulk++;
-                client.index({
-                    index: 'icars',
-                    type: 'cars',
-                    id: iBulk,
-                    body: car
-                }, function (error, response) {
-                    console.log(error);
-                });
-            });
-
-            client.bulk({
-                body: bulkBody
-            }, function (err, resp) {
-                console.log(err);
-                console.log(resp);
-            });
-
-        }
-    });
-}
-
-function ImportCar(client, car) {
-    client.index({
+function ImportCar(client, iBulk, car) {
+    client.create({
         index: 'icars',
         type: 'cars',
         id: iBulk,
         body: car
     }, function (error, response) {
-        console.log(error);
+        console.log("Imported:" + iBulk);
     });
 }
 
-exports.GetAllFromElastic = function () {
+//Car
+exports.GetCarsFromElastic = function () {
     var client = new elastic.Client({
         host: 'localhost:9200'
     });
 
-    client.count(function (error, response, status) {
-        console.log("count");
-        // check for and handle error
-        var count = response.count;
+    client.search({
+        index: 'icars',
+        type: 'cars',
+        body: {
+            sort: [{
+                "_source.volume": {
+                    "order": "desc"
+                }
+            }],
+            size: 10,
+            query: {
+                match_all: {}
+            }
+        }
+
+    }).then(function (resp) {
+        var hits = resp.hits.hits;
+        console.log(hits);
+    }, function (err) {
+        console.trace(err.message);
+    });
+}
+
+exports.ElasticTest = function () {
+    var client = new elastic.Client({
+        host: 'localhost:9200'
+    });
+
+    client.indices.delete({
+        index: 'icars'
+    }, function (err, res) {
+
+        if (err) {
+            console.error(err.message);
+        } else {
+            console.log('Indexes have been deleted!');
+        }
     });
 }
