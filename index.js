@@ -1,10 +1,27 @@
 var caradisiac = require('./caradisiac');
+const express = require('express');
 
-//caradisiac.ElasticTest();
+const app = express();
+const port = process.env.PORT || 9292;
 
-
-caradisiac.GetCarsFromElastic(function () {
-    console.log(" ");
+//API route
+app.get('/populate', (req, res) => {
+    res.write("Populating");
+    caradisiac.PutCarsOnElastic(function(){
+        res.write("Populated");
+    });
 });
 
+app.get('/cars', (req, res) => {
+    res.setHeader('Content-Type', 'json');
+    caradisiac.GetCarsFromElastic(function(cars){
+        res.write(JSON.stringify(cars));
+    });
+});
 
+app.get('/cleanElastic', (req, res) => {
+    caradisiac.DropElastic(function(){
+    });
+});
+
+app.listen(port, () => console.log(`Listening on port ${port}`));

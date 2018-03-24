@@ -21,6 +21,7 @@
   "homepage": "https://github.com/spyk1e/caradisiac#readme",
   "dependencies": {
     "elasticsearch": "^14.2.1",
+    "express": "^4.16.3",
     "fs": "0.0.1-security",
     "node-car-api": "92bondstreet/node-car-api"
   }

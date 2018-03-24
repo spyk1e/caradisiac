@@ -1,4 +1,3 @@
-var fs = require('fs');
 var elastic = require('elasticsearch');
 
 const {
@@ -39,31 +38,23 @@ async function ModelsToElastic(brand, client, callback) {
             models = await getModels(brand);
             console.log(brand + ": " + models.length);
             await models.forEach(async function (model) {
-                if (model.volume != null) {
+                if (model.volume != null && model.volume!="") {
                     if (!CheckExistuuid(JsonModel, model.uuid)) {
                         JsonModel.push(model);
+                        console.log("importing");
                         ImportCar(client, iBulk, model);
                         iBulk++;
                         imodels++;
                     }
                 }
             });
-            if (iwhile > 1) { //Check again 2 times max
+            if (iwhile > 0 ){ //Check again 2 times max
                 imodels = 11;
             };
         }
 
         ibrands++;
         callback(ibrands, brands, JsonModel);
-    })
-}
-
-function WriteJson(listJson, callback) {
-    console / log("Nb cars:" + listJson.length);
-    //Output on Json         
-    fs.writeFile('Cars.json', JSON.stringify(listJson, null, 4), function (err) {
-        console.log('File successfully written!');
-        callback(1);
     })
 }
 
@@ -75,6 +66,7 @@ exports.PutCarsOnElastic = function (callback) {
         });
         iBulk = 1;
 
+        //Check each models and put them in elasticsearch
         ModelsToElastic(brands, client, function (i, brands, JsonModel) {
             console.log("brands:" + i + "/" + brands.length);
         });
@@ -93,7 +85,7 @@ function ImportCar(client, iBulk, car) {
 }
 
 //Car
-exports.GetCarsFromElastic = function () {
+exports.GetCarsFromElastic = function (callback) {
     var client = new elastic.Client({
         host: 'localhost:9200'
     });
@@ -102,26 +94,25 @@ exports.GetCarsFromElastic = function () {
         index: 'icars',
         type: 'cars',
         body: {
-            sort: [{
-                "_source.volume": {
-                    "order": "desc"
-                }
-            }],
-            size: 10,
-            query: {
-                match_all: {}
-            }
+            "sort": [
+                {
+                    "volume.keyword": {
+                        "order": "desc"
+                    }
+                }],
+            size: 20
         }
 
     }).then(function (resp) {
         var hits = resp.hits.hits;
-        console.log(hits);
+        callback(hits);
     }, function (err) {
         console.trace(err.message);
     });
 }
 
-exports.ElasticTest = function () {
+//Clean Database
+exports.DropElastic = function () {
     var client = new elastic.Client({
         host: 'localhost:9200'
     });
