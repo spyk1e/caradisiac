@@ -19,9 +19,4 @@ app.get('/cars', (req, res) => {
     });
 });
 
-app.get('/cleanElastic', (req, res) => {
-    caradisiac.DropElastic(function(){
-    });
-});
-
 app.listen(port, () => console.log(`Listening on port ${port}`));

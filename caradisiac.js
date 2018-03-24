@@ -48,7 +48,7 @@ async function ModelsToElastic(brand, client, callback) {
                     }
                 }
             });
-            if (iwhile > 0 ){ //Check again 2 times max
+            if (iwhile > 2 ){ //Check again 2 times max
                 imodels = 11;
             };
         }
@@ -112,6 +112,7 @@ exports.GetCarsFromElastic = function (callback) {
 }
 
 //Clean Database
+//Use it carefully
 exports.DropElastic = function () {
     var client = new elastic.Client({
         host: 'localhost:9200'
