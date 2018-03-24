@@ -4,17 +4,13 @@
 
 **Table of Contents**
 
-- [Introduction](#introduction)
-- [Objective - Workshop in 1 sentence](#objective---workshop-in-1-sentence)
-- [How to do that?](#how-to-do-that)
-  - [Stack](#stack)
-- [Just tell me what to do](#just-tell-me-what-to-do)
-- [Examples of steps to do](#examples-of-steps-to-do)
-  - [Populate](#populate)
-  - [List of suv](#list-of-suv)
-- [MVP](#mvp)
-  - [Client-side (bonus)](#client-side-bonus)
-- [Don't forget](#dont-forget)
+- [Introduction](#Introduction)
+- [Install](#Install)
+- [Use](#Use)
+  - [See results on a webpage](#See-results-on-a-webpage)
+  - [Use the API on another project](#Use the API on another project)
+    - [Install](#Install-API)
+    - [Usage](#Usage)
 - [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -48,7 +44,7 @@ And then
 
 ### Use the API on another project
 
-#### Instalation
+#### Install API
 ❯ npm install https://github.com/spyk1e/caradisiac.git
 
 ❯ yarn add spyk1e/caradisiac
