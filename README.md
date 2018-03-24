@@ -4,13 +4,13 @@
 
 **Table of Contents**
 
-- [Introduction](#Introduction)
-- [Install](#Install)
-- [Use](#Use)
-  - [See results on a webpage](#See-results-on-a-webpage)
-  - [Use the API on another project](#Use the API on another project)
-    - [Install](#Install-API)
-    - [Usage](#Usage)
+- [Introduction](#introduction)
+- [Install](#install)
+- [Use](#use)
+  - [See results on a webpage](#see-results-on-a-webpage)
+  - [Use the API on another project](#use-the-API-on-another-project)
+    - [Install](#install-API)
+    - [Usage](#usage)
 - [Licence](#licence)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
